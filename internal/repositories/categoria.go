@@ -31,6 +31,7 @@ func (r *CategoriaRepository) Create(categoria *models.Categoria) (*models.Categ
 	if err := config.DB.Create(&categoria).Error; err != nil {
 		return nil, err
 	}
+	return categoria, nil
 }
 
 func (r *CategoriaRepository) Update(categoria *models.Categoria) error {

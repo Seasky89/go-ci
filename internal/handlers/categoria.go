@@ -110,8 +110,7 @@ func DeleteCategoria(w http.ResponseWriter, r *http.Request) {
 		utils.RespondWithError(w, "Erro ao deletar a categoria", http.StatusInternalServerError)
 		return
 	}
-	w.Write([]byte("Categoria deletada com sucesso"))
-	// if _, err := w.Write([]byte("Categoria deletada com sucesso")); err != nil {
-	// 	utils.RespondWithError(w, "Erro ao escrever a resposta: "+err.Error(), http.StatusInternalServerError)
-	// }
+	if _, err := w.Write([]byte("Categoria deletada com sucesso")); err != nil {
+		utils.RespondWithError(w, "Erro ao escrever a resposta: "+err.Error(), http.StatusInternalServerError)
+	}
 }

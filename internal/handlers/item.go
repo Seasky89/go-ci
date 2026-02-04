@@ -74,7 +74,6 @@ func GetItemByCodigo(w http.ResponseWriter, r *http.Request) {
 
 // Criar um novo item (envie JSON via POST)
 func CreateItem(w http.ResponseWriter, r *http.Request) {
-
 	item, err := services.DecodeAndValidateItem(r)
 	if err != nil {
 		utils.RespondWithError(w, err.Error(), http.StatusBadRequest)

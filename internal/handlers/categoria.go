@@ -2,8 +2,8 @@ package handlers
 
 import (
 	"encoding/json"
-	"myapi/internal/models"
 	"myapi/internal/repositories"
+	"myapi/internal/services"
 	"myapi/internal/utils"
 	"net/http"
 	"strconv"
@@ -55,17 +55,19 @@ func GetCategoria(w http.ResponseWriter, r *http.Request) {
 
 // Criar uma nova categoria (envie JSON via POST)
 func CreateCategoria(w http.ResponseWriter, r *http.Request) {
-	var categoria models.Categoria
-	if err := json.NewDecoder(r.Body).Decode(&categoria); err != nil {
-		utils.RespondWithError(w, "Erro ao decodificar a categoria", http.StatusBadRequest)
+	categoria, err := services.DecodeAndValidateCategoria(r)
+	if err != nil {
+		utils.RespondWithError(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
 	repository := repositories.NewCategoriaRepository()
-	if err := repository.Create(categoria); err != nil {
+	createdCategoria, err := repository.Create(categoria)
+	if err != nil {
 		utils.RespondWithError(w, "Erro ao criar a categoria", http.StatusInternalServerError)
 		return
 	}
-	if err := json.NewEncoder(w).Encode(categoria); err != nil {
+	if err := json.NewEncoder(w).Encode(createdCategoria); err != nil {
 		utils.RespondWithError(w, "Erro ao codificar a categoria criada", http.StatusInternalServerError)
 		return
 	}
@@ -73,11 +75,12 @@ func CreateCategoria(w http.ResponseWriter, r *http.Request) {
 
 // Atualizar uma categoria (envie JSON via PUT, com o campo id preenchido)
 func UpdateCategoria(w http.ResponseWriter, r *http.Request) {
-	var categoria models.Categoria
-	if err := json.NewDecoder(r.Body).Decode(&categoria); err != nil {
-		utils.RespondWithError(w, "Erro ao decodificar a categoria", http.StatusBadRequest)
+	categoria, err := services.DecodeAndValidateCategoria(r)
+	if err != nil {
+		utils.RespondWithError(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
 	repository := repositories.NewCategoriaRepository()
 	if err := repository.Update(categoria); err != nil {
 		utils.RespondWithError(w, "Erro ao atualizar a categoria", http.StatusInternalServerError)
@@ -107,7 +110,8 @@ func DeleteCategoria(w http.ResponseWriter, r *http.Request) {
 		utils.RespondWithError(w, "Erro ao deletar a categoria", http.StatusInternalServerError)
 		return
 	}
-	if _, err := w.Write([]byte("Categoria deletada com sucesso")); err != nil {
-		utils.RespondWithError(w, "Erro ao escrever a resposta: "+err.Error(), http.StatusInternalServerError)
-	}
+	w.Write([]byte("Categoria deletada com sucesso"))
+	// if _, err := w.Write([]byte("Categoria deletada com sucesso")); err != nil {
+	// 	utils.RespondWithError(w, "Erro ao escrever a resposta: "+err.Error(), http.StatusInternalServerError)
+	// }
 }

@@ -27,14 +27,14 @@ func (r *CategoriaRepository) FindByID(id int) (*models.Categoria, error) {
 	return &categoria, nil
 }
 
-func (r *CategoriaRepository) Create(categoria models.Categoria) error {
+func (r *CategoriaRepository) Create(categoria *models.Categoria) (*models.Categoria, error) {
 	if err := config.DB.Create(&categoria).Error; err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return categoria, nil
 }
 
-func (r *CategoriaRepository) Update(categoria models.Categoria) error {
+func (r *CategoriaRepository) Update(categoria *models.Categoria) error {
 	if err := config.DB.Save(&categoria).Error; err != nil {
 		return err
 	}
